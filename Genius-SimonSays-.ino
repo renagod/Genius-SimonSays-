@@ -36,7 +36,17 @@ void setup() {
   PORTB = PORTB | (1 << PB2);  //pinMode(10, INPUT_PULLUP);
   PORTB = PORTB | (1 << PB3);  //pinMode(11, INPUT_PULLUP);
   // referência a inicialização da função random()
-  randomSeed(analogRead(A0)); // ou randomSeed(1234);
+  //randomSeed(analogRead(A0)); // ou randomSeed(1234);
+  // A semente de aleatoriedade pode ser definida como analogRead ou um numero qualquer
+  // Uitlizando analogRead com registradores abaixo 
+  ADMUX |= B00000100;//ADMUX | _BV(MUX2);
+  ADMUX |= B01000000;
+  // CONVERSAO AD
+  ADCSRA |= B01000000; // ADCSRA |= _BV(ADEN) | _BV(ADSC);
+  
+  while (bit_is_set(ADCSRA,ADSC));
+  int value = ADCL | (ADCH <<8);
+  randomSeed(value);
 }
 
 void loop() {
